@@ -684,3 +684,124 @@ int edit_group(){
 	
 }//end function edit_group
 */
+#include <stdlib.h>
+
+int edit_itens_group(int id){
+	
+	FILE *p_arq = fopen(ARQ_GROUPS, "rb+");
+	Group edit_group, temp_array;
+	if(p_arq == NULL){
+		printf("\nNao foi possivel abrir o arquivo. Fechando programa.");
+		exit(EXIT_FAILURE);
+	}
+	
+	int i;
+	long id_selecionado;
+	char confirm_delete;
+	
+	FILE *p_arq_product = fopen(ARQ_PRODUCTS, "rb");
+	Products products_group;
+		
+	clear_buffer();
+	printf("\nDIGITE 'A' PARA ADCIONAR ITENS NO GRUPO\nDIGITE 'E' PARA EXCLUIR ITENS  DO GRUPO\nOPCAO: ");
+	char edit_option = getchar();
+
+    if(edit_option != '\n')
+        clear_buffer();
+	
+	edit_option = toupper(edit_option);
+	
+	if(edit_option == 'A'){
+		if(edit_group.quant_products == MAX_ITENS_GROUP){
+			printf("NUMERO MAXIMO DE ITENS DO GRUPO\nRETORNANDO AO MENU");
+			fclose(p_arq);
+			fclose(p_arq_products);
+			return 0;
+		}
+		/*bloco de codigo para insercao de produtos no grupo*/
+	}
+	else if(edit_option == 'E'){
+		
+		printf("\nLISTA DE PRODUTOS DO GRUPO\n");
+		printf("\nDigite 0 caso nao queira excluir o item");
+		
+		for(i = 0; i < MAX_ITENS_GROUP; i++){
+			
+			if(fseek(p_arq_products, (edit_group.id - 1) * sizeof(Products), SEEK_SET) != 0){
+				printf("\nNao foi possivel posicionar o ponteiro do arquivc. Fechando programa.");
+				fclose(p_arq);
+				fclose(p_arq_products);
+				exit(EXIT_FAILURE);
+			}
+			
+			if(fread(&products_group, sizeof(Products), 1, p_arq_products)){
+				printf("\nID:%.5ld | NOME : %s\tDIGITE O ID: ");
+				scanf("%ld", &id_selecionado);
+				
+				if(id_selecionado == 0)
+					continue;
+				
+				clear_buffer();
+				printf("\nPara excluir item do grupo digite 'E'\n");
+				char confirm_delete = getchar();
+			
+			    if(confirm_delete != '\n')
+			        clear_buffer();
+				
+				confirm_delete = toupper(confirm_delete);
+				
+				if(confirm_delete == 'E'){
+					for(j = 0; j < MAX_ITENS_GROUP; j++){
+						temp_group[j].id_products[i] = edit_products.id_products[j];
+						if(edit_group.id_products[j] == id_selecionado){
+							
+						}
+					}//end for para encontrar id do grupo
+					
+				}
+			}//end if fread
+			else{
+				printf("\n\nHouve um erro na leitura do arquivo. Fechando programa.\n");
+				fclose(p_arq);
+				fclose(p_arq_products);	
+				exit(EXIT_FAILURE);
+			}		
+		}//end for
+	}
+
+	clear_buffer();
+	printf("\nPara confirmar a alteracao digite 'C'\n");
+	char validate_group = getchar();
+
+    if(validate_group != '\n')
+        clear_buffer();
+	
+	validate_group = toupper(validate_group);
+	
+	if(validate_group == 'C'){
+	
+		if(fseek(p_arq, (id - 1) * sizeof(Group), SEEK_SET) ==  0){
+			if(fwrite(&edit_group, sizeof(Group), 1, p_arq)){
+				printf("\nGravacao concluida com exito.\n");
+				fclose(p_arq);
+				return 0;
+			}
+			else{
+				printf("\n\nHouve um erro na gravacao do arquivo. Fechando programa.\n");
+				fclose(p_arq);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else{
+			printf("\nNao foi possivel posicionar o ponteiro do arquivc. Fechando programa.");
+			fclose(p_arq);
+			exit(EXIT_FAILURE);
+		}
+	}//end if
+	else{
+		printf("\nNao houve confirmacao do usuario, cancelando novo funcionario\n");
+		fclose(p_arq);
+		return 0;
+	}//end else if 'C'
+	
+}//end function edit_itens_group
