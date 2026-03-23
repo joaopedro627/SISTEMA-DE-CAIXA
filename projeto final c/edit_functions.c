@@ -1,6 +1,290 @@
 #include "MODEL_MAIN.H"
 
-int edit_name(const char name_arq, const int key_ship, const long id){
+int edit_element(const int key_ship, const long *ship_id){
+	
+	int search_option, edit_option, loop, flag_return;
+	
+	if(ship_id != NULL){
+		
+		switch(key_ship){
+			case KEY_PRODUCTS: {	
+					printf("\nQUAL PARAMETRO DO PRODUTO DESEJA ALTERAR?");
+					printf("\n\t[1] = NOME\n\t[2] = PRECO DE VENDA\n\t[3] = PRECO DE COMPRA\n\t[4] = ESTOQUE\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU PRODUTOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+					scanf("%d", &edit_option);
+					
+					do{	
+						switch(edit_option){
+							case 1: edit_name(ARQ_PRODUCTS, KEY_PRODUCTS, *ship_id);	
+								return 0;
+							case 2: edit_sale_price_product(*ship_id);
+								return 0;
+							case 3: edit_purchase_price_product(*ship_id);
+								return 0;
+							case 4: edit_stock_product(*ship_id);
+								return 0;
+							case 5: edit_status(ARQ_PRODUCTS, KEY_PRODUCTS, *ship_id);
+								return 0;
+							case 6: edit_name(ARQ_PRODUCTS, KEY_PRODUCTS, *ship_id);
+								edit_sale_price_product(*ship_id);
+								edit_purchase_price_product(*ship_id);
+								edit_stock_product(*ship_id);
+								edit_status(ARQ_PRODUCTS, KEY_PRODUCTS, *ship_id);
+								return 0;
+							case 7: printf("\nRETORNANDO AO MENU PRODUTOS...\n");
+								return RETORNAR_SUBMENU;
+							case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+								return RETORNAR_MENU_PRINCIPAL;	
+							default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
+								break;
+						}//end switch edit_option					
+					}while(edit_option >= 0 && edit_option <= 8);
+				
+				}//end code block
+				break;
+			case KEY_EMPLOYEES: {
+				
+					printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
+					printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+					scanf("%d", &edit_option);
+					
+					do{	
+						switch(edit_option){
+							case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, *ship_id);	
+								return 0;
+							case 2: edit_position_employee(*ship_id);
+								return 0;
+							case 3: edit_salary_employee(*ship_id);
+								return 0;
+							case 4: edit_voucher_employee(*ship_id);
+								return 0;
+							case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, *ship_id);
+								return 0;
+							case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, *ship_id);	
+								edit_position_employee(*ship_id);
+								edit_salary_employee(*ship_id);
+								edit_voucher_employee(*ship_id);
+								edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, *ship_id);
+								return 0;
+							case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
+								return RETORNAR_SUBMENU;
+							case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+								return RETORNAR_MENU_PRINCIPAL;	
+							default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
+								break;
+						}//end switch edit_option					
+					}while(edit_option >= 0 && edit_option <= 8);						
+			
+				}//end code block
+				break;
+			case KEY_GROUPS: {
+				
+					printf("\nQUAL PARAMETRO DO GRUPO DESEJA ALTERAR?");
+					printf("\n\t[1] = NOME\n\t[2] = ITENS\n\t[3] = STATUS\n\t[4] = TUDO\n\t[5] = RETORNAR AO MENU FUNCIONARIOS\n\t[6] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+					scanf("%d", &edit_option);
+					
+					do{	
+						switch(edit_option){
+							case 1: edit_name(ARQ_GROUPS, KEY_GROUPS, *ship_id);	
+								return 0;
+							case 2: edit_itens_group(*ship_id);
+								return 0;
+							case 3: edit_status(ARQ_GROUPS, KEY_GROUPS, *ship_id);
+								return 0;
+							case 4: edit_name(ARQ_GROUPS, KEY_GROUPS, *ship_id);
+								flag_return = edit_itens_group(*ship_id);
+								if(flag_return == RETORNAR_SUBMENU){
+									printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
+									return RETORNAR_SUBMENU;
+								}
+								else if(flag_return == RETORNAR_MENU_PRINCIPAL){
+									printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+									return RETORNAR_MENU_PRINCIPAL;	
+								}
+								edit_status(ARQ_GROUPS, KEY_GROUPS, *ship_id);
+								return 0;
+							case 5: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
+								return RETORNAR_SUBMENU;
+							case 6:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+								return RETORNAR_MENU_PRINCIPAL;	
+							default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
+								break;
+						}//end switch edit_option					
+					}while(edit_option >= 0 && edit_option <= 8);				
+			
+				}//end code block
+				break;
+		}//end switch
+		
+	}//end if ship_id
+	
+	long id;
+	
+	do{
+		
+		printf("QUAL PARAMETRO DE BUSCA DESEJA ALTERAR?");
+		printf("\n[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU SUBMENU\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+
+		scanf("%d", &search_option);
+			 	
+ 		switch(search_option){
+ 			
+ 			case 1: if(key_ship == KEY_PRODUCTS)
+		 			id = search_id_generic(ARQ_PRODUCTS, KEY_PRODUCTS);
+		 		else if(key_ship == KEY_EMPLOYEES)
+		 			id = search_id_generic(ARQ_EMPLOYEES, KEY_EMPLOYEES);
+		 		else 
+		 			id = search_id_generic(ARQ_GROUPS, KEY_GROUPS);
+		 			
+				break;
+ 			case 2: 
+			 	if(key_ship == KEY_PRODUCTS){
+			 		id = search_id_generic_list(KEY_PRODUCTS);
+			 		
+			 		if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU PRODUTOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+					
+				}//end key product
+		 			
+		 		else if(key_ship == KEY_EMPLOYEES){
+		 			id = search_id_generic_list(KEY_EMPLOYEES);
+		 			
+		 			if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU DE FUNCIONARIOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+					
+				}//end key employee
+		 			
+		 		else{
+		 			id = search_id_generic_list(KEY_GROUPS);
+		 			
+		 			if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU DE GRUPOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+		 			
+				}//end key group
+		 			
+ 				break;
+ 			case 3: if(key_ship == KEY_PRODUCTS)
+		 			id = search_name(ARQ_PRODUCTS, KEY_PRODUCTS);
+		 		else if(key_ship == KEY_EMPLOYEES)
+		 			id = search_name(ARQ_EMPLOYEES, KEY_EMPLOYEES);
+		 		else 
+		 			id = search_name(ARQ_GROUPS, KEY_GROUPS);
+		 			 
+ 				break;	
+			case 4:	("\nRETORNANDO AO MENU SUBMENU...\n");
+				return RETORNAR_SUBMENU;
+			case 5: printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+				return RETORNAR_MENU_PRINCIPAL;
+ 			default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5]\n\n");
+				break;
+		}//end switch search_option
+			 		
+ 		if(id == 0){
+			printf("\nELEMENTO NAO ENCONTRADO. RETORNANDO AO SUBMENU...\n\n");
+			return RETORNAR_SUBMENU;
+		}//end if(id == 0)
+					
+	}while(search_option >= 1 && search_option <= 5);			
+	
+	switch(key_ship){
+		case KEY_PRODUCTS: {
+			
+				do{
+					
+					printf("QUAL PARAMETRO DO PRODUTO DESEJA ALTERAR?\n");
+					printf("\n\t[1] = NOME\n\t[2] = PRECO DE VENDA\n\t[3] = PRECO DE COMPRA\n\t[4] = ESTOQUE\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU PRODUTOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+					scanf("%d", &edit_option);
+					
+					switch(edit_option){
+						case 1: edit_name(ARQ_PRODUCTS, KEY_PRODUCTS, id);	
+							return 0;
+						case 2: edit_sale_price_product(id);
+							return 0;
+						case 3: edit_purchase_price_product(id);
+							return 0;
+						case 4: edit_stock_product(id);
+							return 0;
+						case 5: edit_status(ARQ_PRODUCTS, KEY_PRODUCTS, id);
+							return 0;
+						case 6: edit_name(ARQ_PRODUCTS, KEY_PRODUCTS, id);
+							edit_sale_price_product(id);
+							edit_purchase_price_product(id);
+							edit_stock_product(id);
+							edit_status(ARQ_PRODUCTS, KEY_PRODUCTS, id);
+							return 0;
+						case 7: printf("\nRETORNANDO AO MENU PRODUTOS...\n");
+							return RETORNAR_SUBMENU;
+						case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+							return RETORNAR_MENU_PRINCIPAL;	
+						default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
+							break;
+					}//end switch edit_option					
+				}while(edit_option >= 0 && edit_option <= 8);
+			
+			}//end code block	
+			break;
+			
+		case KEY_EMPLOYEES: {
+			
+				printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
+				printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+				scanf("%d", &edit_option);
+				
+				do{	
+					switch(edit_option){
+						case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
+							return 0;
+						case 2: edit_position_employee(id);
+							return 0;
+						case 3: edit_salary_employee(id);
+							return 0;
+						case 4: edit_voucher_employee(id);
+							return 0;
+						case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
+							return 0;
+						case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
+							edit_position_employee(id);
+							edit_salary_employee(id);
+							edit_voucher_employee(id);
+							edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
+							return 0;
+						case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
+							return RETORNAR_SUBMENU;
+						case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+							return RETORNAR_MENU_PRINCIPAL;	
+						default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
+							break;
+					}//end switch edit_option					
+				}while(edit_option >= 0 && edit_option <= 8);					
+		
+			}//end code block
+				break;
+			/*case KEY_GROUPS : {
+				
+				break;
+			}*/
+	}//end switch key ship edit			
+	
+}//end fuction edit_element
+
+int edit_name(const char name_arq[], const int key_ship, const long id){
 
 	FILE *p_arq = fopen(name_arq, "rb+");
 
@@ -18,7 +302,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 			
 			Products alter_product;
 			
-			while(fread(&alter_product, sizeof(Products), 1, products_p) != 0 && id != alter_product.id){}//continua lendo até achar ou acabar
+			while(fread(&alter_product, sizeof(Products), 1, p_arq) != 0 && id != alter_product.id){}//continua lendo até achar ou acabar
 
 			do{	
 				printf("DIGITE O NOVO NOME DO PRODUTO: ");
@@ -28,7 +312,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 					continue;
 				if(loop = check_burst_buffer(alter_product.name, MAX_PRODUCT_NAME))
 					continue;
-				if(verify_duplicate_name_product(alter_product.name)){
+				if(verify_duplicate_name(ARQ_PRODUCTS, KEY_PRODUCTS, alter_product.name)){
 					printf("\n[X] ERRO: Produto ja existe! Edicao cancelado.\n");
 					fclose(p_arq);
 				    return 0;
@@ -46,7 +330,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 			validate = toupper(validate);
 			
 			if(validate == 'C'){
-				if(fseek(products_p, (id - 1) * sizeof(Products), SEEK_SET) ==  0){
+				if(fseek(p_arq, (id - 1) * sizeof(Products), SEEK_SET) ==  0){
 					if(fwrite(&alter_product, sizeof(Products), 1, p_arq)){
 						printf("\nGravacao concluida com exito.\n");
 						fclose(p_arq);
@@ -72,7 +356,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 		
 		}//end code block
 			break;
-		case KEY_EMPLOYEE: {
+		case KEY_EMPLOYEES: {
 			
 			Employee alter_employee;
 			
@@ -89,7 +373,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 				if(loop = check_burst_buffer(alter_employee.name, MAX_EMPLOYEE_NAME))
 					continue;
 				
-				if(warning_duplicate_name_employees(alter_employee.name)){
+				if(verify_duplicate_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, alter_employee.name)){
 				    printf("\nERRO: FUNCIONARIO com NOME ja existente! Edicao cancelado.\n");
 				    fclose(p_arq);
 				    return 0;
@@ -134,7 +418,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 		
 		}//end code block
 			break;
-		case KEY_GROUP: {
+		case KEY_GROUPS: {
 			
 			Group alter_group;
 			
@@ -151,7 +435,7 @@ int edit_name(const char name_arq, const int key_ship, const long id){
 				if(loop = check_burst_buffer(alter_group.name, MAX_GROUP_NAME))
 					continue;
 				
-				if(warning_duplicate_name_employees(alter_group.name)){
+				if(verify_duplicate_name(ARQ_GROUPS, KEY_GROUPS, alter_group.name)){
 				    printf("\nERRO: GRUPO com NOME ja existente! Edicao cancelado.\n");
 				    fclose(p_arq);
 				    return 0;
@@ -214,11 +498,11 @@ int edit_status(const char name_arq[], const int key_ship, const long id){
 	clear_buffer();
 	
 	switch(key_ship){
-		case KEY_PRODUCT: {
+		case KEY_PRODUCTS: {
 			
 				Products alter_product;
 				
-				while (fread(&alter_product, sizeof(Products), 1, products_p) != 0 && id != alter_product.id){}//continua lendo até achar ou acabar
+				while (fread(&alter_product, sizeof(Products), 1, p_arq) != 0 && id != alter_product.id){}//continua lendo até achar ou acabar
 				
 				printf("\n\t[1] ATIVO\t[2] DESATIVADO\nDIGITE O NOVO STATUS DO PRODUTO: ");
 						
@@ -330,7 +614,7 @@ int edit_status(const char name_arq[], const int key_ship, const long id){
 						
 			}//end code block
 			break;
-		case KEY_GROUP: {
+		case KEY_GROUPS: {
 			
 				Group alter_group;
 				
@@ -394,3 +678,110 @@ int edit_status(const char name_arq[], const int key_ship, const long id){
 	return 0;
 	
 }//end function edit_status_product
+
+int desativate_element(const int key_ship){
+	
+	long id;
+	int search_option;
+	
+	do{
+		
+		printf("QUAL PARAMETRO DE BUSCA DESEJA ALTERAR?");
+		printf("\n[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU SUBMENU\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
+
+		scanf("%d", &search_option);
+			 	
+ 		switch(search_option){
+ 			
+ 			case 1: if(key_ship == KEY_PRODUCTS)
+		 			id = search_id_generic(ARQ_PRODUCTS, KEY_PRODUCTS);
+		 		else if(key_ship == KEY_EMPLOYEES)
+		 			id = search_id_generic(ARQ_EMPLOYEES, KEY_EMPLOYEES);
+		 		else 
+		 			id = search_id_generic(ARQ_GROUPS, KEY_GROUPS);
+		 			
+				break;
+ 			case 2: 
+			 	if(key_ship == KEY_PRODUCTS){
+			 		id = search_id_generic_list(KEY_PRODUCTS);
+			 		
+			 		if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU PRODUTOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+					
+				}//end key product
+		 			
+		 		else if(key_ship == KEY_EMPLOYEES){
+		 			id = search_id_generic_list(KEY_EMPLOYEES);
+		 			
+		 			if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU DE FUNCIONARIOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+					
+				}//end key employee
+		 			
+		 		else{
+		 			id = search_id_generic_list(KEY_GROUPS);
+		 			
+		 			if(id == RETORNAR_SUBMENU){
+						printf("\nRETORNANDO AO MENU DE GRUPOS...\n");
+						return RETORNAR_SUBMENU;
+					}//end if(id == 0)
+					if(id == RETORNAR_MENU_PRINCIPAL){
+						printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+						return RETORNAR_MENU_PRINCIPAL;
+					}//end if(id == 0)
+		 			
+				}//end key group
+		 			
+ 				break;
+ 			case 3: if(key_ship == KEY_PRODUCTS)
+		 			id = search_name(ARQ_PRODUCTS, KEY_PRODUCTS);
+		 		else if(key_ship == KEY_EMPLOYEES)
+		 			id = search_name(ARQ_EMPLOYEES, KEY_EMPLOYEES);
+		 		else 
+		 			id = search_name(ARQ_GROUPS, KEY_GROUPS);
+		 			 
+ 				break;	
+			case 4:	("\nRETORNANDO AO MENU SUBMENU...\n");
+				return RETORNAR_SUBMENU;
+			case 5: printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
+				return RETORNAR_MENU_PRINCIPAL;
+ 			default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5]\n\n");
+				break;
+		}//end switch search_option
+			 		
+ 		if(id == 0){
+			printf("\nELEMENTO NAO ENCONTRADO. RETORNANDO AO SUBMENU...\n\n");
+			return RETORNAR_SUBMENU;
+		}//end if(id == 0)
+					
+	}while(search_option >= 1 && search_option <= 5);
+	
+	if(key_ship == KEY_PRODUCTS){
+		edit_status(ARQ_PRODUCTS, KEY_PRODUCTS, id);
+		printf("\nPRODUTO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU PRODUTOS...\n\n");
+			return 0;
+	}
+	else if(key_ship == KEY_EMPLOYEES){
+		edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
+		printf("\nFUNCIONARIO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU FUNCIONARIOS...\n\n");
+			return 0;	
+	}
+	else{
+		edit_status(ARQ_GROUPS, KEY_GROUPS, id);
+		printf("\nGRUPO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU FUNCIONARIOS...\n\n");
+			return 0;
+	}
+	
+}//end function desativate_employee

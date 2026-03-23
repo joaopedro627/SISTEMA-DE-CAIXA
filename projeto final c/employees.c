@@ -22,17 +22,17 @@ int options_employees(){
 				new_employee();
 				break;//end case 2
 			case 3: printf("\nINCIANDO DESATIVAR FUNCIONARIO... \n");
-				flag_return = desativate_employee();
+				flag_return = desativate_element(KEY_EMPLOYEES);
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
 			case 4: printf("\nINICIANDO ALTERAR INFORMACOES DO FUNCIONARIO\n\n");
-				flag_return = edit_employee();
+				flag_return = edit_element(KEY_EMPLOYEES, NULL);
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
 			case 5: printf("\nINICIANDO VISUALIZAR FUNCIONARIO\n\n");
-				flag_return = search_employee();
+				flag_return = visualize_element(ARQ_EMPLOYEES, KEY_EMPLOYEES);
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
@@ -415,7 +415,7 @@ void new_employee(){
 	if(p_arq){
 		
 		do{//verificações do nome do funcionario
-			record_employee.id = get_next_id_group(ARQ_EMPLOYEES, KEY_EMPLOYEES);
+			record_employee.id = get_next_id(ARQ_EMPLOYEES, KEY_EMPLOYEES);
 			
 			clear_buffer();
 			printf("DIGITE O NOME DO NOVO FUNCIONARIO: ");
@@ -426,7 +426,7 @@ void new_employee(){
 			if(loop = check_burst_buffer(record_employee.name, MAX_EMPLOYEE_NAME))
 				continue;
 			
-			if(warning_duplicate_name_employees(record_employee.name)){
+			if(verify_duplicate_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, record_employee.name)){
 			    printf("\nERRO: FUNCIONARIO com NOME ja existente! Cadastro cancelado.\n");
 			    fclose(p_arq);
 			    return;
@@ -462,7 +462,7 @@ void new_employee(){
 			if(loop = check_burst_buffer(record_employee.position, MAX_POSITION_NAME))
 				continue;
 				
-			if (warning_similar_names_position_employees(record_employee.position) > 0) {
+			if (check_similar_names (ARQ_EMPLOYEES, KEY_EMPLOYEES, record_employee.position) > 0) {
 			    char confirma;
 			    printf("\nO cargo '%s' parece com os itens acima.", record_employee.position);
 			    printf("\nDeseja cadastrar mesmo assim? [S/N]: ");
@@ -585,216 +585,6 @@ void new_employee(){
 		
 	}//end function list_salarys	
 	
-int desativate_employee(){
-	
-	int search_option, id;
-	
-	printf("\nQUAL FUNCIONARIO DESEJA ALTERAR?");
-	printf("\n[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU FUNCIONARIOS\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-	
-	do{
-		scanf("%d", &search_option);
-		
-		switch(search_option){
-			case 1: id = search_id_generic(ARQ_EMPLOYEES, KEY_EMPLOYEES);
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;
-				}//end if(id == 0)
-				
-				edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-				printf("\nFUNCIONARIO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;				
-			case 2: id = search_id_generic_list(KEY_EMPLOYEES);
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;
-				}//end if(id == 0)
-				if(id == RETORNAR_SUBMENU){
-					printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-					return RETORNAR_SUBMENU;
-				}//end if(id == 0)
-				if(id == RETORNAR_MENU_PRINCIPAL){
-					printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-					return RETORNAR_MENU_PRINCIPAL;
-				}//end if(id == 0)
-				edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-				printf("\nFUNCIONARIO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;		
-			case 3: id = search_name_employee();
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return RETORNAR_SUBMENU;
-				}//end if(id == 0)
-			
-				edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-				printf("\nFUNCIONARIO DESATIVADO COM SUCESSO\n\nRETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;		
-			case 4: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-				return RETORNAR_SUBMENU;
-			case 5: printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-				return RETORNAR_MENU_PRINCIPAL;
-			default:  printf("\nOPCAO INVALIDA ...\nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5]\n\n");
-				break;			
-		}//end switch option_search
-		
-	}while(search_option >= 1 && search_option <= 5);//end do-while switch(search_option)
-	
-}//end function desativate_employee
-
-int edit_employee(){
-	
-	long id;
-	int search_option, edit_option, loop;
-	
-	printf("QUAL FUNCIONARIO DESEJA ALTERAR?");
-	printf("\n[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU FUNCIONARIOS\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-	
-	do{
-		scanf("%d", &search_option);
-		
-		switch(search_option){
-			
-			case 1:
-				id = search_id_generic(ARQ_EMPLOYEES, KEY_EMPLOYEES);
-				
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;
-				}//end if(id == 0)
-				
-				printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-				printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-				scanf("%d", &edit_option);
-				
-				do{	
-					switch(edit_option){
-						case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 2: edit_position_employee(id);
-							return 0;
-						case 3: edit_salary_employee(id);
-							return 0;
-						case 4: edit_voucher_employee(id);
-							return 0;
-						case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-							edit_position_employee(id);
-							edit_salary_employee(id);
-							edit_voucher_employee(id);
-							edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-							return RETORNAR_SUBMENU;
-						case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-							return RETORNAR_MENU_PRINCIPAL;	
-						default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-							break;
-					}//end switch edit_option					
-				}while(edit_option >= 0 && edit_option <= 8);
-				
-				break;//break case 1 (search_option)
-			case 2: id = search_id_generic_list(KEY_EMPLOYEES);
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return 0;
-				}//end if(id == 0)
-				if(id == RETORNAR_SUBMENU){
-					printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-					return RETORNAR_SUBMENU;
-				}//end if(id == 0)
-				if(id == RETORNAR_MENU_PRINCIPAL){
-					printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-					return RETORNAR_MENU_PRINCIPAL;
-				}//end if(id == 0)
-					
-				printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-				printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-				scanf("%d", &edit_option);
-				
-				do{	
-					switch(edit_option){
-						case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-							return 0;
-						case 2: edit_position_employee(id);
-							return 0;
-						case 3: edit_salary_employee(id);
-							return 0;
-						case 4: edit_voucher_employee(id);
-							return 0;
-						case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-							edit_position_employee(id);
-							edit_salary_employee(id);
-							edit_voucher_employee(id);
-							edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-							return RETORNAR_SUBMENU;
-						case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-							return RETORNAR_MENU_PRINCIPAL;	
-						default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-							break;
-					}//end switch edit_option					
-				}while(edit_option >= 0 && edit_option <= 8);
-					
-				break;//break case 2 (search_option)
-			case 3: id = search_name_employee();
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					return RETORNAR_SUBMENU;
-				}//end if(id == 0)
-				
-				printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-				printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-				scanf("%d", &edit_option);
-				
-				do{	
-					switch(edit_option){
-						case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-							return 0;
-						case 2: edit_position_employee(id);
-							return 0;
-						case 3: edit_salary_employee(id);
-							return 0;
-						case 4: edit_voucher_employee(id);
-							return 0;
-						case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-							edit_position_employee(id);
-							edit_salary_employee(id);
-							edit_voucher_employee(id);
-							edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-							return 0;
-						case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-							return RETORNAR_SUBMENU;
-						case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-							return RETORNAR_MENU_PRINCIPAL;	
-						default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-							break;
-					}//end switch edit_option					
-				}while(edit_option >= 0 && edit_option <= 8);
-				
-				break;//break case 3 (search_option)
-			case 4:	("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-				return RETORNAR_SUBMENU;
-			case 5: printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-				return RETORNAR_MENU_PRINCIPAL;
-			default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5]\n\n");
-				break;
-		}//end switch search_option
-			
-	}while(search_option >= 1 && search_option <= 5);//end do_while(swicth(search_option)
-	
-}//end fuction edit_employee
-	
 	int edit_position_employee(int id_employee){
 	
 		FILE *p_arq = fopen(ARQ_EMPLOYEES, "rb+");
@@ -819,7 +609,7 @@ int edit_employee(){
 			if(loop = check_burst_buffer(alter_employee.position, MAX_POSITION_NAME))
 				continue;
 			
-			if (warning_similar_names_position_employees(alter_employee.position) > 0) {
+			if (check_similar_names(ARQ_EMPLOYEES, KEY_EMPLOYEES, alter_employee.position) > 0) {
 			    char confirma;
 			    printf("\nO cargo '%s' parece com os itens acima.", alter_employee.position);
 			    printf("\nDeseja Editar mesmo assim? [S/N]: ");
@@ -982,258 +772,6 @@ int edit_employee(){
 		}
 	}//end function edit_voucher_employee
 
-int search_employee(){
-	
-	FILE *p_arq = fopen("employees.dat", "rb");
-	Employee employee;
-	
-	if(p_arq == NULL){//file failure open check
-		printf("\nNao foi possivel abrir o arquivo. Fechando programa.");
-		exit(EXIT_FAILURE);
-	}//end if(file failure open check)
-	
-	int id;
-	int search_option, edit_option, loop;
-	
-	printf("QUAL FUNCIONARIO DESEJA VISUALIZAR?\n");
-	printf("[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU FUNCIONARIOS\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-	
-	do{
-		scanf("%d", &search_option);
-		
-		switch(search_option){
-			
-			case 1:
-				id = search_id_generic(ARQ_EMPLOYEES, KEY_EMPLOYEES);
-				
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU FUNCIONARIOS...\n\n");
-					fclose(p_arq);
-					return 0;
-				}//end if(id == 0)
-				
-				if(fseek(p_arq, (id - 1) * sizeof(Employee), SEEK_SET) ==  0){
-					if(fread(&employee, sizeof(Employee), 1, p_arq)){
-						printf("ID: %.6d\nNOME: %s\nCARGO: %s\nSALARIO: %.2f\nVOUCHER:%.2f\n", employee.id, employee.name, employee.position, employee.salary, employee.voucher);
-						printf("STATUS: %s\n", employee.status == ATIVO ? "ATIVO" : "INATIVO");
-						fclose(p_arq);
-						
-						clear_buffer();
-						printf("\nCaso queria editar alguma das informações digite 'E'\n");
-						char flag_edit = getchar();
-				
-				        if(flag_edit != '\n')
-				            clear_buffer();
-						
-				    	flag_edit = toupper(flag_edit);
-				    	
-				    	if(flag_edit == 'E'){
-				    		
-							printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-							printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-							scanf("%d", &edit_option);
-							
-							do{	
-								switch(edit_option){
-									case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										return 0;
-									case 2: edit_position_employee(id);
-										return 0;
-									case 3: edit_salary_employee(id);
-										return 0;
-									case 4: edit_voucher_employee(id);
-										return 0;
-									case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										edit_position_employee(id);
-										edit_salary_employee(id);
-										edit_voucher_employee(id);
-										edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-										return RETORNAR_SUBMENU;
-									case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-										return RETORNAR_MENU_PRINCIPAL;	
-									default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-										break;
-								}//end switch edit_option					
-							}while(edit_option >= 0 && edit_option <= 8);			
-							
-						}//end if 'E'
-				        else{
-				        	printf("\nRETORNANDO AO MENU...\n\n");
-				        	return RETORNAR_SUBMENU;
-						}
-					}//end if fread
-					else{
-						printf("\nERRO: Houve um erro na leitura do arquivo. Fechando programa.\n");
-						fclose(p_arq);
-		        		exit(EXIT_FAILURE);
-					}
-				}//if fseek
-			//end case 1
-			case 2: id = search_id_generic_list(KEY_EMPLOYEES);
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU...\n\n");
-					fclose(p_arq);
-					return 0;
-				}//end if(id == 0)
-				if(id == RETORNAR_SUBMENU){
-					printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-					fclose(p_arq);
-					return RETORNAR_SUBMENU;
-				}//end if(id == 0)
-				if(id == RETORNAR_MENU_PRINCIPAL){
-					printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-					fclose(p_arq);
-					return RETORNAR_MENU_PRINCIPAL;
-				}//end if(id == 0)
-				
-				if(fseek(p_arq, (id - 1) * sizeof(Employee), SEEK_SET) ==  0){
-					if(fread(&employee, sizeof(Employee), 1, p_arq)){
-						printf("ID: %.6d\nNOME: %s\nCARGO: %s\nSALARIO: %.2f\nVOUCHER: %.2f\n", employee.id, employee.name, employee.position, employee.salary, employee.voucher);
-						printf("STATUS: %s\n", employee.status == ATIVO ? "ATIVO" : "INATIVO");
-						fclose(p_arq);
-						
-						clear_buffer();
-						printf("\nCaso queria editar alguma das informações digite 'E'\n");
-						char flag_edit = getchar();
-				
-				        if(flag_edit != '\n')
-				            clear_buffer();
-						
-				    	flag_edit = toupper(flag_edit);
-				    	
-				    	if(flag_edit == 'E'){
-				    		
-							printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-							printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-							scanf("%d", &edit_option);
-							
-							do{	
-								switch(edit_option){
-									case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										return 0;
-									case 2: edit_position_employee(id);
-										return 0;
-									case 3: edit_salary_employee(id);
-										return 0;
-									case 4: edit_voucher_employee(id);
-										return 0;
-									case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										edit_position_employee(id);
-										edit_salary_employee(id);
-										edit_voucher_employee(id);
-										edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-										return RETORNAR_SUBMENU;
-									case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-										return RETORNAR_MENU_PRINCIPAL;	
-									default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-										break;
-								}//end switch edit_option					
-							}while(edit_option >= 0 && edit_option <= 8);		
-							
-						}//end if 'E'
-				        else{
-				        	printf("\nRETORNANDO AO MENU...\n\n");
-				        	return RETORNAR_SUBMENU;
-						}
-					}//end if fread
-					else{
-						printf("\nERRO: Houve um erro na leitura do arquivo. Fechando programa.\n");
-						fclose(p_arq);
-		        		exit(EXIT_FAILURE);
-					}
-				}//if fseek
-			//end case 2
-			case 3: id = search_name_product();
-			
-				if(id == 0){
-					printf("\nFUNCIONARIO NAO ENCONTRADO. RETORNANDO AO MENU...\n\n");
-					fclose(p_arq);
-					return 0;
-				}//end if(id == 0)
-				
-				if(fseek(p_arq, (id - 1) * sizeof(Employee), SEEK_SET) ==  0){
-					if(fread(&employee, sizeof(Employee), 1, p_arq)){
-						printf("ID: %.6d\nNOME: %s\nCARGO: %s\nSALARIO: %.2f\nVOUCHER: %.2f\n", employee.id, employee.name, employee.position, employee.salary, employee.voucher);
-						printf("STATUS: %s\n", employee.status == ATIVO ? "ATIVO" : "INATIVO");
-						fclose(p_arq);
-						
-						clear_buffer();
-						printf("\nCaso queria editar alguma das informações digite 'E'\n");
-						char flag_edit = getchar();
-				
-				        if(flag_edit != '\n')
-				            clear_buffer();
-						
-				    	flag_edit = toupper(flag_edit);
-				    	
-				    	if(flag_edit == 'E'){
-							printf("\nQUAL PARAMETRO DO FUNCIONARIO DESEJA ALTERAR?");
-							printf("\n\t[1] = NOME\n\t[2] = CARGO\n\t[3] = SALARIO\n\t[4] = VOUCHER\n\t[5] = STATUS\n\t[6] = TUDO\n\t[7] = RETORNAR AO MENU FUNCIONARIOS\n\t[8] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-							scanf("%d", &edit_option);
-							
-							do{	
-								switch(edit_option){
-									case 1: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										return 0;
-									case 2: edit_position_employee(id);
-										return 0;
-									case 3: edit_salary_employee(id);
-										return 0;
-									case 4: edit_voucher_employee(id);
-										return 0;
-									case 5: edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 6: edit_name(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);	
-										edit_position_employee(id);
-										edit_salary_employee(id);
-										edit_voucher_employee(id);
-										edit_status(ARQ_EMPLOYEES, KEY_EMPLOYEES, id);
-										return 0;
-									case 7: printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-										return RETORNAR_SUBMENU;
-									case 8:	printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-										return RETORNAR_MENU_PRINCIPAL;	
-									default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7] - [8]\n\n");
-										break;
-								}//end switch edit_option					
-							}while(edit_option >= 0 && edit_option <= 8);		
-							
-						}//end if 'E'
-				        else{
-				        	printf("\nRETORNANDO AO MENU...\n\n");
-				        	return RETORNAR_SUBMENU;
-						}
-					}//end if fread
-					else{
-						printf("\nERRO: Houve um erro na leitura do arquivo. Fechando programa.\n");
-						fclose(p_arq);
-		        		exit(EXIT_FAILURE);
-					}
-				}//if fseek
-			//end case 3
-			case 4:	printf("\nRETORNANDO AO MENU FUNCIONARIOS...\n");
-				fclose(p_arq);
-				return RETORNAR_SUBMENU;
-			case 5: printf("\nRETORNANDO AO MENU PRINCIPAL...\n\n");
-				fclose(p_arq);
-				return RETORNAR_MENU_PRINCIPAL;
-			default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5]\n\n");
-				break;
-		}//end switch search_option
-			
-	}while(search_option >= 1 && search_option <= 5);
-	
-}//end fuction search-a-employee
-
 int update_valors(){
 	
 	FILE *p_arq = fopen("ARQ_EMPLOYEES", "rb+");
@@ -1388,7 +926,7 @@ int update_valors(){
 							if(loop = check_burst_buffer(update.position, MAX_POSITION_NAME))
 								continue;
 							
-							if (warning_similar_names_position_employees(update.position) > 0) {
+							if (check_similar_names(ARQ_EMPLOYEES, KEY_EMPLOYEES, update.position) > 0) {
 							    char confirma;
 							    printf("\nO cargo '%s' parece com os itens acima.", update.position);
 							    printf("\nDeseja Editar mesmo assim? [S/N]: ");
@@ -1448,90 +986,3 @@ int update_valors(){
 	}while(edit_option >= 1 && edit_option <= 5);
 	
 }//end function update_valor
-
-int search_name_employee(){
-	
-	FILE *p_arq = fopen("employees.dat", "rb");
-    Employee p;
-    
-    if(p_arq == NULL){
-        printf("\nERRO: Nao foi possivel abrir o arquivo. Fechando programa.");
-        exit(EXIT_FAILURE);
-    }
-
-    char termo_busca[MAX_EMPLOYEE_NAME];    // O que o usuario digitou
-    char busca_min[MAX_EMPLOYEE_NAME];      // Versao minuscula do que o usuario digitou
-    char nome_employee_min[MAX_EMPLOYEE_NAME]; // Versao minuscula do nome do funcionario no arquivo
-    
-    int encontrou_algum = 0;
-    int id_escolhido = 0;
-    int loop;
-
-    // 1. CAPTURA DO TERMO DE BUSCA
-    do{
-        printf("\n--- BUSCA INTELIGENTE ---\n");
-        printf("Digite parte do nome (ex: 'Joao'): ");
-        
-        // Limpeza de buffer básica se necessario
-        // fflush(stdin); 
-        
-        fgets(termo_busca, MAX_EMPLOYEE_NAME, stdin);
-        termo_busca[strcspn(termo_busca, "\n")] = 0; // Remove o Enter no final
-        
-        // Validação simples se está vazio
-        if(strlen(termo_busca) < 1) {
-            printf("Digite pelo menos uma letra!\n");
-            loop = 1;
-        } else {
-            loop = 0;
-        }
-    } while(loop);
-
-    printf("\n--- RESULTADOS ENCONTRADOS ---\n");
-    printf("%-5s | %-30s | %-15s | %-10s\n", "ID", "NOME", "CARGO", "SALARIO");
-	printf("--------------------------------------------------------------------------\n");
-
-    // Converte o que o usuário digitou para minúsculo
-    texto_minusculo(busca_min, termo_busca);
-
-    // 2. O LOOP "GOOGLE" (VARREDURA)
-    while(fread(&p, sizeof(Employee), 1, p_arq)){
-        
-        // Converte o nome do produto atual para minúsculo numa variável temporária
-        texto_minusculo(nome_employee_min, p.name);
-
-        // A MÁGICA: strstr verifica se a busca existe DENTRO do nome
-       if(strstr(nome_employee_min, busca_min) != NULL){
-        // %03d para ID, %-30.30s para nome, %-15s para cargo, %.2f para salário
-        printf("%03d   | %-30.30s | %-15s | R$ %.2f\n", p.id, p.name, p.position, p.salary);
-        encontrou_algum++;
-    	}
-    }
-
-    // 3. DECISÃO FINAL
-    if(encontrou_algum == 0){
-        printf("\nNenhum funcionario encontrado com esse termo.\n");
-        fclose(p_arq);
-        return 0;
-        
-    } 
-	else {
-        printf("----------------------------------------------------\n");
-        printf("\nForam encontrados %d funcionarios.\n", encontrou_algum);
-        printf("Digite o ID do produto que deseja SELECIONAR (ou 0 para cancelar): ");
-        scanf("%d", &id_escolhido);
-        
-        if(id_escolhido > 0){
-        	printf("\nO usuario digitou '0', retornando a ULTIMA funcao\n");
-		}
-        	return 0;
-        
-        // Limpa buffer pós-scanf para não travar o menu lá fora
-        // fflush(stdin); 
-        clear_buffer(); 
-
-        fclose(p_arq);
-        return id_escolhido; // Retorna o ID que o usuário escolheu na lista
-    }
-	
-}//end function search_name

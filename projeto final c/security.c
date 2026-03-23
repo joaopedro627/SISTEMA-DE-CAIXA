@@ -18,61 +18,6 @@ int check_digit(const char *string){
     return 0;//Contains only digits
 }//end function check_digit
 
-int verify_duplicate_name_product(char *new_name){
-    FILE *products_p = fopen("products.dat", "rb");
-    Products p;
-    
-    // Se o arquivo não existe, não há duplicatas
-    if (products_p == NULL) return 0; 
-
-    char busca_min[MAX_PRODUCT_NAME];
-    char nome_arquivo_min[MAX_PRODUCT_NAME];
-
-    // Prepara o nome que o usuário digitou para comparação (tudo minusculo)
-    texto_minusculo(busca_min, new_name);
-
-    // Varredura silenciosa
-    while (fread(&p, sizeof(Products), 1, products_p)) {
-        texto_minusculo(nome_arquivo_min, p.name);
-
-        // strcmp retorna 0 se as strings forem EXATAMENTE iguais
-        if (strcmp(nome_arquivo_min, busca_min) == 0) {
-            fclose(products_p);
-            return 1; // Encontrou um "espelho"!
-        }
-    }
-
-    fclose(products_p);
-    return 0; // Nome está limpo, pode cadastrar
-    
-}//end function verify_duplicate_name_product
-
-int check_similar_names_product(char *new_name){
-    FILE *products_p = fopen("products.dat", "rb");
-    Products p;
-    if (products_p == NULL) return 0;
-
-    char busca_min[MAX_PRODUCT_NAME];
-    char nome_arq_min[MAX_PRODUCT_NAME];
-    int parecidos = 0;
-
-    texto_minusculo(busca_min, new_name);
-
-    while (fread(&p, sizeof(Products), 1, products_p)) {
-        texto_minusculo(nome_arq_min, p.name);
-
-        // Se "Coca 600" está dentro de "Coca 600ml" OU vice-versa
-        if (strstr(nome_arq_min, busca_min) != NULL || strstr(busca_min, nome_arq_min) != NULL) {
-            if (parecidos == 0) printf("\n[!] ALERTA: Produtos similares encontrados:\n");
-            printf(" -> ID: %ld | Nome: %s\n", p.id, p.name);
-            parecidos++;
-        }
-    }
-
-    fclose(products_p);
-    return parecidos;
-}//end function check_similar_names
-
 int validate_full_name(const char *string){ 
     int encontrou_letra = 0;//flag ensures that there is useful content
     
@@ -139,7 +84,7 @@ void texto_minusculo(char *destino, const char *origem) {
 }
 
 int warning_similar_names_position_employees(char *new_name){
-    FILE *p_arq = fopen("emeployees.dat", "rb");
+    FILE *p_arq = fopen("employees.dat", "rb");
     Employee temp_employee;
     if (p_arq == NULL) return 0;
 
@@ -164,61 +109,119 @@ int warning_similar_names_position_employees(char *new_name){
     return parecidos;
 }//end function check_similar_names
 
-int warning_duplicate_name_employees(char *new_name){
-    FILE *p_arq = fopen("employees.dat", "rb");
-    Employee temp_employee;
-    
-    // Se o arquivo não existe, não há duplicatas
-    if (p_arq == NULL) return 0; 
+int verify_duplicate_name(const char name_arq[], const int key_ship, char *new_name){
+    FILE *p_arq = fopen(name_arq, "rb");
+    if (p_arq == NULL) return 0;
 
-    char busca_min[MAX_EMPLOYEE_NAME];
-    char nome_arquivo_min[MAX_EMPLOYEE_NAME];
-
-    // Prepara o nome que o usuário digitou para comparação (tudo minusculo)
+    char busca_min[MAX_PRODUCT_NAME];
     texto_minusculo(busca_min, new_name);
 
-    // Varredura silenciosa
-    while (fread(&temp_employee, sizeof(Employee), 1, p_arq)) {
-        texto_minusculo(nome_arquivo_min, temp_employee.name);
+    int duplicado = 0;
 
-        // strcmp retorna 0 se as strings forem EXATAMENTE iguais
-        if (strcmp(nome_arquivo_min, busca_min) == 0) {
-            fclose(p_arq);
-            clear_buffer();
-            return 1; // Encontrou um "espelho"!
-        }
+    switch(key_ship) {
+        case KEY_PRODUCTS: {
+            Products p;
+            char nome_arq_min[MAX_PRODUCT_NAME];
+            while (fread(&p, sizeof(Products), 1, p_arq)) {
+                texto_minusculo(nome_arq_min, p.name);
+                if (strcmp(nome_arq_min, busca_min) == 0) {
+                    duplicado = 1;
+                    break;
+                }
+            }
+        } break;
+
+        case KEY_EMPLOYEES: {
+            Employee e;
+            char nome_arq_min[MAX_EMPLOYEE_NAME];
+            while (fread(&e, sizeof(Employee), 1, p_arq)) {
+                texto_minusculo(nome_arq_min, e.name);
+                if (strcmp(nome_arq_min, busca_min) == 0) {
+                    duplicado = 1;
+                    break;
+                }
+            }
+        } break;
+
+        case KEY_GROUPS: {
+            Group g;
+            char nome_arq_min[MAX_GROUP_NAME];
+            while (fread(&g, sizeof(Group), 1, p_arq)) {
+                texto_minusculo(nome_arq_min, g.name);
+                if (strcmp(nome_arq_min, busca_min) == 0) {
+                    duplicado = 1;
+                    break;
+                }
+            }
+        } break;
     }
 
     fclose(p_arq);
-    return 0; // Nome está limpo, pode cadastrar
+    return duplicado;
+}//end function verify_duplicate_name
+
+int check_similar_names(const char name_arq[], const int key_ship, char *new_name){
+    FILE *p_arq = fopen(name_arq, "rb");
     
-}//end function verify_duplicate_name_employee
-
-int verify_duplicate_name_group(char *new_name){
-    FILE *groups_p = fopen("groups.dat", "rb");
-    Group temp_group;
+    if (p_arq == NULL) return 0;
     
-    // Se o arquivo não existe, não há duplicatas
-    if (groups_p == NULL) return 0; 
-
-    char busca_min[MAX_GROUP_NAME];
-    char nome_arquivo_min[MAX_GROUP_NAME];
-
-    // Prepara o nome que o usuário digitou para comparação (tudo minusculo)
-    texto_minusculo(busca_min, new_name);
-
-    // Varredura silenciosa
-    while (fread(&temp_group, sizeof(Group), 1, groups_p)) {
-        texto_minusculo(nome_arquivo_min, temp_group.name);
-
-        // strcmp retorna 0 se as strings forem EXATAMENTE iguais
-        if (strcmp(nome_arquivo_min, busca_min) == 0) {
-            fclose(groups_p);
-            return 1; // Encontrou um "espelho"!
-        }
-    }
-
-    fclose(groups_p);
-    return 0; // Nome está limpo, pode cadastrar
+    char busca_min[MAX_PRODUCT_NAME];
+    char nome_arq_min[MAX_PRODUCT_NAME];
+    int parecidos = 0;
+	
+	texto_minusculo(busca_min, new_name);
+	
+    switch(key_ship){
+    	case KEY_PRODUCTS: {
+    			Products p;
+				
+				while (fread(&p, sizeof(Products), 1, p_arq)) {
+			        texto_minusculo(nome_arq_min, p.name);
+			
+			        // Se "Coca 600" está dentro de "Coca 600ml" OU vice-versa
+			        if (strstr(nome_arq_min, busca_min) != NULL || strstr(busca_min, nome_arq_min) != NULL) {
+			            if (parecidos == 0) printf("\n[!] ALERTA: Produtos similares encontrados:\n");
+			            printf(" -> ID: %ld | Nome: %s\n", p.id, p.name);
+			            parecidos++;
+			        }
+			    }
+				
+			}//end code block
+			break;
+		case KEY_EMPLOYEES: {
+				Employee e;
+					
+				while (fread(&e, sizeof(Employee), 1, p_arq)) {
+			        texto_minusculo(nome_arq_min, e.position);
+			
+			        // Se "Coca 600" está dentro de "Coca 600ml" OU vice-versa
+			        if (strstr(nome_arq_min, busca_min) != NULL || strstr(busca_min, nome_arq_min) != NULL) {
+			            if (parecidos == 0) printf("\n[!] ALERTA: Funções similares encontrados:\n");
+			            printf(" -> ID: %d | Função: %s\n", e.id, e.position);
+			            parecidos++;
+			        }
+			    }
+				
+			}//end code block
+			break;
+		case KEY_GROUPS: {
+				Group g;
+					
+				while (fread(&g, sizeof(Group), 1, p_arq)) {
+			        texto_minusculo(nome_arq_min, g.name);
+			
+			        // Se "Coca 600" está dentro de "Coca 600ml" OU vice-versa
+			        if (strstr(nome_arq_min, busca_min) != NULL || strstr(busca_min, nome_arq_min) != NULL) {
+			            if (parecidos == 0) printf("\n[!] ALERTA: Grupos similares encontrados:\n");
+			            printf(" -> ID: %d | Nome: %s\n", g.id, g.name);
+			            parecidos++;
+			        }
+			    }
+				
+			}//end code block
+			break;
+	}//end switch
     
-}//end function verify_duplicate_name_product
+    fclose(p_arq);
+    return parecidos;
+}//end function check_similar_names

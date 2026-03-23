@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o products.o security.o groups.o employees.o generic_functions.o
-LINKOBJ  = main.o products.o security.o groups.o employees.o generic_functions.o
+OBJ      = main.o products.o security.o groups.o employees.o generic_functions.o edit_functions.o interface.o
+LINKOBJ  = main.o products.o security.o groups.o employees.o generic_functions.o edit_functions.o interface.o
 LIBS     = -L"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib" -L"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include"
 CXXINCS  = -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include" -I"C:/Program Files (x86)/Embarcadero/Dev-Cpp/TDM-GCC-64/lib/gcc/x86_64-w64-mingw32/9.2.0/include/c++"
@@ -41,3 +41,9 @@ employees.o: employees.c
 
 generic_functions.o: generic_functions.c
 	$(CC) -c generic_functions.c -o generic_functions.o $(CFLAGS)
+
+edit_functions.o: edit_functions.c
+	$(CC) -c edit_functions.c -o edit_functions.o $(CFLAGS)
+
+interface.o: interface.c
+	$(CC) -c interface.c -o interface.o $(CFLAGS)

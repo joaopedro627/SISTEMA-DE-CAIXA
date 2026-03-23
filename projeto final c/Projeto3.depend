@@ -1,0 +1,33 @@
+# depslib dependency file v1.0
+1773974656 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\edit_functions.c
+	"MODEL_MAIN.H"
+
+1773974148 c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\model_main.h
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<errno.h>
+	<stdbool.h>
+
+1773539394 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\employees.c
+	"MODEL_MAIN.H"
+
+1773974170 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\generic_functions.c
+	"MODEL_MAIN.H"
+
+1773974882 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\groups.c
+	"MODEL_MAIN.H"
+
+1773621012 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\main.c
+	"MODEL_MAIN.H"
+
+1773620956 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\products.c
+	"MODEL_MAIN.H"
+
+1773623788 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\security.c
+	"MODEL_MAIN.H"
+
+1774062046 source:c:\users\jo„o pedro\onedrive\documentos\computa«√o\1 ferias es\projeto final c\interface.c
+	"MODEL_MAIN.H"
+

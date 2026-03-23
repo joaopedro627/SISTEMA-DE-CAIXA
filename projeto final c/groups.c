@@ -1,5 +1,5 @@
 #include "MODEL_MAIN.H"
-/*
+
 int options_groups_products(){
 	
 	int flag_return, user_option;
@@ -8,7 +8,7 @@ int options_groups_products(){
 	
 		printf(" ----- MENU GRUPOS ----- \n\n");
 		printf("[1] = LISTA DE GRUPOS\n[2] = NOVO GRUPO\n[3] = EDICAO DE GRUPOS DA INTERFACE\n");
-		printf("[4] = ALTERAR PARAMETROS DO GRUPO\n[5] = VISUALIZAR GRUPO\n[6] = RETORNANDO AO MENU PRINCIPAL\n[7] = SAIR DO PROGRAMA\n\n");
+		printf("[4] = ALTERAR PARAMETROS DO GRUPO\n[5] = VISUALIZAR GRUPO\n[6] = DESATIVAR GRUPO\n[7] = RETORNANDO AO MENU PRINCIPAL\n[8] = SAIR DO PROGRAMA\n\n");
 		printf("DIGITE A OPCAO DESEJADA: ");								//[6] atualizar valores. S/V
 		scanf("%d", &user_option);
 		
@@ -22,28 +22,33 @@ int options_groups_products(){
 				new_group();
 				break;//end case 2
 			case 3: printf("\nINCIANDO EDICAO DE GRUPOS DA INTERFACE... \n");
-				flag_return = edit_interface_groups();
+				//flag_return = edit_interface_groups();
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
 			case 4: printf("\nINICIANDO ALTERAR ITENS DO GRUPO\n\n");
-				flag_return = edit_group();
+				flag_return = edit_element(KEY_GROUPS, NULL);
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
 			case 5: printf("\nINICIANDO VISUALIZAR GRUPO\n\n");
-				flag_return = search_group();
+				flag_return = visualize_element(ARQ_GROUPS, KEY_GROUPS);
 				if(flag_return == RETORNAR_MENU_PRINCIPAL)
 					return 0;
 				break;
-			case 6: printf("\nRETORNANDO AO MENU PRINCIPAL ... \n\n");
+			case 6: printf("\nINCIANDO DESATIVAR GRUPO ... \n");
+				flag_return = desativate_element(KEY_GROUPS);
+				if(flag_return == RETORNAR_MENU_PRINCIPAL)
+					return 0;
+				break;
+			case 7: printf("\nRETORNANDO AO MENU PRINCIPAL ... \n\n");
 				return RETORNAR_MENU_PRINCIPAL;
-			case 7: printf("\nSAINDO DO PROGRAMA ... \n");
+			case 8: printf("\nSAINDO DO PROGRAMA ... \n");
 				return SAIR_PROGRAMA;
 			default: printf("\nOPCAO INVALIDA ... \nDIGITE UMAS DAS OPCOES: [1] - [2] - [3] - [4] - [5] - [6] - [7]\n\n");
 				break;//end default case
 		}//end switch
-	}while(user_option >= 1 && user_option <= 7);//end do-while
+	}while(user_option >= 1 && user_option <= 8);//end do-while
 
 }//end function options_employees
 
@@ -51,7 +56,7 @@ int list_groups(){
 	
 	FILE *p_arq = fopen("groups.dat", "rb");
 	Employee file_groups;
-	int pag = 1;
+	long pag = 1;
 	int filter_option, contador = 1, flag_return;
 	char flag_filter;
 	
@@ -71,7 +76,7 @@ int list_groups(){
 		tam_array = (size_t)tam_bytes_arq / sizeof(Group);
 	}
 	else{
-		printf("\nNenhum funcionario cadastrado.\n");
+		printf("\nNenhum grupo cadastrado.\n");
     	fclose(p_arq);
     	return 0;
 	}
@@ -91,11 +96,11 @@ int list_groups(){
 	
 	fclose(p_arq);
 	
-	int max_pags = tam_array / 20;
+	long max_pags = tam_array / 20;
 	if (tam_array % 20 != 0)
 	    max_pags++;
 
-	printf("\n----- LISTA DE GRUPOS ---- \t\t[%d] NUMEROS DE PAGINA\n", max_pags);
+	printf("\n----- LISTA DE GRUPOS ---- \t\t[%ld] NUMEROS DE PAGINA\n", max_pags);
 	printf("\n\n----- Pagina %d ----\n\n", pag);
 	
    	for(i = 0; i < tam_array; i++, contador++){
@@ -150,7 +155,7 @@ int list_groups(){
 					}
 				}//if 'F'		
 				
-				printf("\nPara vizualizar itens do grupo digite o ID do grupo\nCaso nao deseje vizualizar digite um valor menor ou igual a 0. Digite: \n\n");
+				printf("\nPara vizualizar itens do grupo digite o ID do grupo\nCaso nao deseje vizualizar digite um valor menor ou igual a 0.\nDigite: \n\n");
 				int id_group;
 		
 		        scanf("%d", &id_group);
@@ -158,7 +163,7 @@ int list_groups(){
 				if(id_group > 0)
 					itens_group(id_group);
 				
-				printf("\n\n----- Pagina %d ----\n\n", pag);
+				printf("\n\n----- Pagina %ld ----\n\n", pag);
 		}//end contador	
 		
 		printf("\nPara vizualizar itens do grupo digite o ID do grupo\nCaso nao deseje vizualizar digite um valor menor ou igual a 0. Digite: \n\n");
@@ -241,14 +246,14 @@ int list_groups(){
 		return;
 		
 	}//end function itens_group
-
+	
 	int filters_groups(Group array[], size_t tam_array){
 		
 		int option_filter, option_filter_intern, flag_return, contador;
 		int i;
 		
 		//variables og_array
-		int pag = 1;
+		long pag = 1;
 		int max_pags = tam_array / 20;
 			if (tam_array % 20 != 0)
 			    max_pags++;
@@ -267,18 +272,18 @@ int list_groups(){
 					else if(flag_return == RETORNAR_MENU_PRINCIPAL)
 						return RETORNAR_MENU_PRINCIPAL;
 				case 2:
-				flag_return = price_filter(array, tam_array, max_pags);
+				//flag_return = price_filter(array, tam_array, max_pags);
 					if(flag_return == RETORNAR_SUBMENU)
 						return RETORNAR_SUBMENU;
 					else if(flag_return == FILTRO_BEM_SUCEDIDO)
 						return FILTRO_BEM_SUCEDIDO;
 					else if(flag_return == RETORNAR_MENU_PRINCIPAL)
 						return RETORNAR_MENU_PRINCIPAL;
-				case 3: printf("\n----- LISTA DE PRODUTOS ---- \t\t[%d] NUMEROS DE PAGINA\n", max_pags);
+				case 3: printf("\n----- LISTA DE GRUPOS ---- \t\t[%d] NUMEROS DE PAGINA\n", max_pags);
 					printf("\n\n----- Pagina %d ----\n\n", pag);
 				   	for(i = tam_array - 1; i >= 0; i--, contador++){
 				   		
-				   		printf("ID: %.6d | NOME: %s | PRECO: %.2f | PRECO_COMPRA: %.2f | ESTOQUE: %d | ", array[i].id, array[i].name, array[i].sale_price, array[i].purchase_price, array[i].stock);
+				   		printf("ID: %.6d | NOME: %s | QUANTIDADE DE PRODUTOS: %.3d | ", array[i].id, array[i].name, array[i].quant_products);
 						printf(" STATUS: %s\n",array[i].status == ATIVO ? "ATIVO" : "INATIVO");
 							
 						if(contador % 20 == 0){
@@ -288,12 +293,12 @@ int list_groups(){
 								return RETORNAR_SUBMENU;
 							else if(flag_return == RETORNAR_FUNCAO)
 								return RETORNAR_FUNCAO;
-							printf("\n\n----- Pagina %d ----\n\n", pag);
+							printf("\n\n----- Pagina %ld ----\n\n", pag);
 							i = ((tam_array - 1) - ((pag - 1) * 20)) + 1;//troca o valor do i para caminhar entre paginas
 						}//end contador
 					}//end for para impressao
 					return FILTRO_BEM_SUCEDIDO;
-				case 4: flag_return = alphabetical_filter(array, tam_array, max_pags);
+				//case 4: flag_return = alphabetical_filter(array, tam_array, max_pags);
 					if(flag_return == RETORNAR_SUBMENU)
 						return RETORNAR_SUBMENU;
 					else if(flag_return == FILTRO_BEM_SUCEDIDO)
@@ -314,7 +319,7 @@ int list_groups(){
 		int status_option, contador = 1, flag_return, flag_filter;
 		
 		//variables og_array
-		int pag = 1;
+		long pag = 1;
 		int max_pags = tam_array / 20;
 			if (tam_array % 20 != 0)
 			    max_pags++;
@@ -325,13 +330,13 @@ int list_groups(){
 			if(array[i].status == INATIVO)
 				qtd_inactive_group++;
 		}
-		int pag_inactive = 1;
+		long pag_inactive = 1;
 		int max_pags_inactive = qtd_inactive_group / 20;
 		if(qtd_inactive_group % 20 != 0)
-			   max_pags_group++;
+			   max_pags++;
 		size_t qtd_active_group = tam_array - qtd_inactive_group;
 		
-		int pag_active = 1;
+		long pag_active = 1;
 		int max_pags_active = qtd_active_group / 20;
 		if (qtd_active_group % 20 != 0)
 			   max_pags_active++;
@@ -343,8 +348,8 @@ int list_groups(){
 			scanf("%d", &status_option);
 		        
 		    switch(status_option){
-	        	case 1: if(qtd_active_product == 0){	
-	        		printf("\nNAO HA PRODUTOS ATIVOS NA LISTA\nRETORNANDO AO MENU SUBMENU\n");
+	        	case 1: if(qtd_active_group == 0){	
+	        		printf("\nNAO HA GRUPOS ATIVOS NA LISTA\nRETORNANDO AO MENU SUBMENU\n");
 	        		return RETORNAR_SUBMENU;
 					}
 					printf("\n----Lista filtro ATIVO---- \t\t[%d] NUMEROS DE PAGINA\n", max_pags_active);
@@ -403,7 +408,7 @@ int list_groups(){
 						}
         			}//end for para preenchimento do vetor de inativos
 	        			
-        			for((i = 0; i < qtd_inactive_group; i++, contador++){
+        			for(i = 0; i < qtd_inactive_group; i++, contador++){
         				
         				printf("ID: %.6d | NOME: %s | QUANT.PRODUTOS: %d\n", groups_inactive[i].id, groups_inactive[i].name, groups_inactive[i].quant_products);
 								
@@ -457,324 +462,371 @@ int list_groups(){
 
 void new_group(){
 	
-	FILE *p_arq = fopen("groups.dat", "ab+");
+	FILE *p_group = fopen(ARQ_GROUPS, "ab+");
 	Group record_group;
-	int loop = 0, max_item, i, j;
-	int flag_return;
-	int produtos_encontrados[MAX_ITENS_GROUP];
+	int loop = 0, i , j;
+	char confirma;
 	
-	FILE *products_p = fopen("products.dat", "rb");
-	Products p;
-	
-	if(products_p == NULL){//file failure open check
-		printf("\nNao foi possivel abrir o arquivo dos produtos. Fechando programa.");
+	if(p_group == NULL){
+		printf("\nNao foi possivel abrir o arquivo dos grupos. Fechando programa.");
 		exit(EXIT_FAILURE);
 	}
 	
-	if(p_arq){
-		
-		do{//verificações do nome do funcionario
-			record_group.id = get_next_id(ARQ_GROUPS, KEY_GROUPS);
+	do{		
+		record_group.id = get_next_id(ARQ_GROUPS, KEY_GROUPS);
 			
 			clear_buffer();
 			printf("DIGITE O NOME DO NOVO GRUPO: ");
 			fgets(record_group.name, MAX_GROUP_NAME, stdin);
 			record_group.name[strcspn(record_group.name, "\n")] = 0;
 			if(loop = check_empty_text(record_group.name))
-				continue;			
+				continue;
 			if(loop = check_burst_buffer(record_group.name, MAX_GROUP_NAME))
 				continue;
-
-			if(verify_duplicate_name_group(record_group.name)){
-			    printf("\nERRO: GRUPO com NOME ja existente! Cadastro cancelado.\n");
-			    fclose(p_arq);
+			if(verify_duplicate_name(ARQ_GROUPS, KEY_GROUPS, record_group.name)){
+				printf("\n[X] ERRO: GRUPO ja existe! Cadastro cancelado.\n");
+				fclose(p_group);
 			    return;
 			}
-		}while(loop == 1);
-		
-		printf("\nADCIONE OS PRODUTOS DO GRUPO. MAX: %d\nPara acessar a lista de produtos digite 'L'\nPara nao adcionar produto digite qualquer tecla (ENTER)", MAX_ITENS_GROUP);
-		
-		for(i = 0; i < MAX_ITENS_GROUP; i++){
-			record_group.id_products[i] = 0;
-			record_group.sales_products[i] = 0;
-		}
-		
-		clear_buffer();
-		char flag_list = getchar();
-
-        if(flag_list != '\n')
-            clear_buffer();
-		
-    	flag_list = toupper(flag_list);
-    	
-    	if(flag_list == 'L'){
-    		
-    		list_products();
-    		
-    		printf("\nADCIONE OS PRODUTOS DO GRUPO. MAX: %d\nPara adcionar produto por produto digite 'U' (Indicado para grandes listas de produtos)\nPara adcionar varios produto digite 'V'\nPara nao adcionar produto digite qualquer tecla (ENTER)", MAX_ITENS_GROUP);
-    		
-	    	clear_buffer();
-			char quant_products = getchar();
-	
-	        if(quant_products != '\n')
-	            clear_buffer();
+			    
+			if (check_similar_names(ARQ_GROUPS, KEY_GROUPS, record_group.name) > 0) {
+			    printf("\nO nome '%s' parece com os itens acima.", record_group.name);
+			    printf("\nDeseja cadastrar mesmo assim? [S/N]: ");
+			    scanf(" %c", &confirma); 
+			    clear_buffer(); // Limpa buffer
 			
-	    	quant_products = toupper(quant_products);
-	    	
-	    	if(quant_products == 'U'){
-	    		
-	    		for(i = 0; i < MAX_ITENS_GROUP; i++){
-	    			
-	    			list_products();
-	    			printf("PRODUTO NUMERO: %d NO GRUPO\nDigite -1 para parar o envio de produtos\nDIGITE O PREÇO DO PRODUTO: ", i + 1);
-	    			scanf("%ld", &record_group.id_products[i]);
-	    			
-	    			if(record_group.id_products[i] < 0){
-	    				printf("\nERRO: ID incorreto o id precisa ser > 0");
-	    				i--;
-	    				continue;
-					}
-	    			
-	    			if(record_group.id_products[i] == -1){
-	    				for(j = 0; j < MAX_ITENS_GROUP; j++){
-	    					if(record_group.id_products[j] == 0){
-	    						max_item = j;
-	    						break;
-							}	
-						}
-						printf("\nO numeros de produtos do grupo sera de %d", max_item);
-						break;
-					}//end if id_products == -1
-	    			
-	    			while(fread(&p, sizeof(Products), 1, products_p)){
-	    				produto_encontrado = 0;
-						if(record_group.id_products[i] == p.id){
-							if(p.status == INATIVO){
-								printf("\nProduto (%s) nao pode ser adcionado por estar INATIVO\nEdite o status do produto!\nCadastro do produto cancelado.", p.name);
-								i--;
-								break;
-							}
-							printf("\nProduto encontrado! ( %s )\n", p.name);
-							produto_encontrado = 1;
-							break;
-						}//end verificate if(user_id == id) 
-						else
-							produto_encontrado = 0;			
-					}
-					if(produto_encontrado == 0){
-						printf("\nProduto NAO encontrado. ID incorreto ou NAO existente\n");
-						i--;
-						continue;
-					}	
-	    			
-				}//end for para preenchimento dos produtos 1:1
-	    		
-    		}//end if 'U'
-    		else if(quant_products == 'V'){
-    			
-    			for(i = 0; i < MAX_ITENS_GROUP; i++){
-	    			
-	    			list_products();
-	    			printf("DIGITE O NUMERO MAXIMO DE PRODUTOS QUE CONSEGUIR\nDigite -1 para parar o envio de produtos\nDIGITE O PREÇO DO PRODUTO: ");
-	    			
-	    			scanf("%ld", &record_group.id_products[i]);
-	    			
-	    			if(record_group.id_products[i] == -1){
-	    				for(j = 0; j < MAX_ITENS_GROUP; j++){
-	    					if(record_group.id_products[j] == 0){
-	    						max_item = j - 1;
-	    						break;
-							}	
-						}
-						printf("\nO numeros de produtos do grupo sera de %d", max_item + 1);
-						break;
-					}//end if id_products == -1
-	    			
-	    			if(record_group.id_products[i] < 0){
-	    				printf("\nERRO: ID incorreto o id precisa ser > 0");
-	    				i--;
-	    				continue;
-					}
-	    			
-	    			while(fread(&p, sizeof(Products), 1, products_p)){
-	    				produtos_encontrados[i] = 0;
-						if(record_group.id_products[i] == p.id){
-							if(p.status == INATIVO){
-								printf("\nProduto (%s) pode ser adcionado por estar INATIVO\nEdite o status do produto!\nCadastro do produto cancelado.", p.name);
-								i--;
-								break;
-							}
-							produtos_encontrados[i] = 1;
-							break;
-						}//end verificate if(user_id == id) 
-						else
-							produtos_encontrados[i] = 0;			
-					}
-					if(produtos_encontrados[i] == 0){
-						printf("\nProduto %d NAO encontrado. ID incorreto ou NAO existente\n", i + 1);
-						continue;
-					}
-	    			
-				}//end for para preenchimento de varios produtos 
-    			
-			}//end if 'V'
-			else
-				max_item = 0;
-				
-		}//end if 'L'
-		else
-			max_item = 0;
-
-		for(i = 0; i < MAX_ITENS_PRODUCTS; i++){
-			if(record_group.id_products[i] == 0){
-				record_group.quant_products = i;
-				break;
-			}	
+			    if (toupper(confirma) != 'S') {
+			        printf("\nCadastro cancelado pelo usuario.\n");
+			        fclose(p_group);
+			        return;
+			    }
+			}
+		
+	}while(loop == 1);
+	
+	for(i = 0; i < MAX_ITENS_GROUP; i++){//insere valores -1 como valor de segurança
+		record_group.id_products[i] = -1;
+		record_group.sales_products[i] = -1;
+	}
+	record_group.quant_products = 0;
+	record_group.status = ATIVO;
+	
+	printf("\nDeseja adcionar Produtos no grupo?\nDigite 'A' para começar a adcionar produtos!");
+	scanf(" %c", &confirma);
+	
+	char view_list;
+	long user_id;
+	int flag_same_product;
+	FILE *p_products = fopen(ARQ_PRODUCTS, "rb");
+	Products product;
+		
+	if (toupper(confirma) == 'A') {
+    	clear_buffer();
+    	
+    	if(p_products == NULL){
+    		printf("\nNao foi possivel abrir o arquivo dos grupos. Fechando programa.");
+			exit(EXIT_FAILURE);
 		}
 		
-		record_group.status = ATIVO;
+    	printf("\nCaso queira ver a lista de produtos digite 'L'\n"); 
+		view_list = getchar();
 		
-		clear_buffer();
-		printf("\nPara confirmar o novo grupo digite 'C'\n");
-		char validate_group = getchar();
+		if(view_list != '\n')
+    	    clear_buffer();
+	
+		view_list = toupper(view_list);
+	
+		if(view_list == 'L')
+			list_products();
+		
+		printf("\nVoce devera digitar o ID do produto que deseja adcionar ao grupo, sendo no maximo 30 produtos!\n");
+		printf("Caso nao queria adcionar mais produtos digite 0!\nID: ");
+	
+		for(i = 0; i < MAX_ITENS_GROUP; i++) {
+    		printf("\nID do Produto: ");
+    		scanf("%ld", &user_id);
 
-        if(validate_group != '\n')
-            clear_buffer();
-		
-    	validate_group = toupper(validate_group);
-    	
-    	if(validate_group == 'C'){
-		
-			if(fwrite(&record_group, sizeof(Group), 1, p_arq)){
-				printf("\n\nGravacao concluida com exito\n\n");
-				fclose(p_arq);
-				fclose(products_p);
-				return;
+    		if(user_id == 0) break;
+			
+			if(user_id < 0){
+				printf("\nERRO: Valor invalido inserido pelo usuario!");
+				user_id = 0;
+				clear_buffer();
+				i--;
+				continue;
 			}
+			
+			if(record_group.quant_products == MAX_ITENS_GROUP){
+				printf("\nGrupo com numero maximo de itens atingido! Crie um novo grupo.");
+				break;
+			}
+			
+			flag_same_product = 0;
+			
+			if(fseek(p_products, (user_id - 1) * sizeof(Products), SEEK_SET) == 0 && fread(&product, sizeof(Products), 1, p_products) == 1){
+       		 
+				for(j = 0; j < MAX_ITENS_GROUP ; j++){//loop interno para checagem de produto ja inserido no grupo
+					if(record_group.id_products[j] == product.id){
+						printf("\nProduto ( ID %ld, %s ) ja existente no grupo", product.id, product.name);
+						flag_same_product = true;
+						break;
+					}
+				}//end for check same product in group
+				if(flag_same_product == true){
+					i--;
+					continue;
+				}
+				
+				record_group.id_products[i] = product.id;
+				record_group.quant_products = record_group.quant_products + 1;
+			}//END FSEEK
 			else{
-				printf("\n\nHouve um erro na gravacao do arquivo. Fechando programa.\n");
-				fclose(p_arq);
-				fclose(products_p);
-				exit(EXIT_FAILURE);
+				if (feof(p_products)) {
+		        	printf("\n[!] Produto ID %ld nao encontrado. (Fim do arquivo).\n", user_id);// Erro comum: O usuário digitou um ID muito alto que passou do limite do arquivo
+			    }
+				else if (ferror(p_products)){
+			        printf("\n[X] ERRO CRITICO DE LEITURA no arquivo de produtos!\n");// Erro Crítico: O SO bloqueou a leitura ou o arquivo corrompeu
+			        printf("Codigo do Sistema: %s\n", strerror(errno)); // Mostra o erro exato do Windows/Linux
+			        
+			        clearerr(p_products); // OBRIGATORIO: Limpa a flag de erro para o loop poder tentar ler o proximo!
+			        
+			    }
+				else
+			        printf("\n[!] Falha ao posicionar a busca no arquivo.\n");// O fseek que falhou (ex: arquivo vazio, ID negativo que escapou da validação)
+			    
+			    i--; // Volta uma casa no loop para o usuario tentar outro ID
 			}
-		}	
-		else{
-			printf("\nNao houve confirmacao do usuario, cancelando novo funcionario\n");
-			fclose(p_arq);
-			fclose(products_p);
+		}//end for
+		
+    }//caso o usuario digite A
+    	
+	clear_buffer();
+	printf("\nPara confirmar o novo grupo digite 'C'\n");
+	char validate_group = getchar();
+	
+	if(validate_group != '\n')
+        clear_buffer();
+	
+	validate_group = toupper(validate_group);
+	
+	if(validate_group == 'C'){
+	
+		if(fwrite(&record_group, sizeof(Group), 1, p_group)){
+			printf("\n\nGravacao concluida com exito\n\n");
+			fclose(p_group);
+			fclose(p_products);
 			return;
 		}
-			
-	}//end if p_arq
+		else{
+			printf("\n\nHouve um erro na gravacao do arquivo. Fechando programa.\n");
+			fclose(p_group);
+			fclose(p_products);
+			exit(EXIT_FAILURE);
+		}
+	}
 	else{
-		printf("Nao foi possivel criar o arquivo! fechando o programa!\n");
-		exit(EXIT_FAILURE);
-	}//end else
+		printf("\nNao houve confirmacao do usuario, cancelando novo grupo\n");
+		fclose(p_group);
+		fclose(p_products);
+		return;
+	}
 	
 }//end function new_group
-
-int edit_group(){
-	
-	int id;
-	int search_option, edit_option, loop;
-	
-	printf("QUAL GRUPO DESEJA ALTERAR?");
-	printf("\n[1] = BUSCAR POR ID\n[2] = BUSCAR PELA LISTA\n[3] = BUSCAR POR NOME\n[4] = RETORNAR AO MENU PRODUTOS\n[5] = RETORNAR AO MENU PRINCIPAL\n\nDIGITE A OPCAO DESEJADA: ");
-	
-	
-}//end function edit_group
-*/
-#include <stdlib.h>
 
 int edit_itens_group(int id){
 	
 	FILE *p_arq = fopen(ARQ_GROUPS, "rb+");
-	Group edit_group, temp_array;
+	Group edit_group;
+	
 	if(p_arq == NULL){
 		printf("\nNao foi possivel abrir o arquivo. Fechando programa.");
 		exit(EXIT_FAILURE);
 	}
 	
-	int i;
+	if(fseek(p_arq, (id - 1) * sizeof(Group), SEEK_SET) == 0){
+		if(fread(&edit_group, sizeof(Group), 1, p_arq) != 1){ 
+			printf("\n\nHouve um erro na leitura do arquivo. Fechando programa.\n");
+			fclose(p_arq);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else{
+		printf("\nNao foi possivel posicionar o ponteiro do arquivo. Fechando programa.");
+		fclose(p_arq);
+		exit(EXIT_FAILURE);
+	}
+	
+	// CORREÇÃO: flag_return declarada aqui
+	int i, j, flag_same_product, copy_flag = 0, flag_return;
 	long id_selecionado;
-	char confirm_delete;
+	char confirm_delete, view_list;
 	
 	FILE *p_arq_product = fopen(ARQ_PRODUCTS, "rb");
 	Products products_group;
 		
 	clear_buffer();
-	printf("\nDIGITE 'A' PARA ADCIONAR ITENS NO GRUPO\nDIGITE 'E' PARA EXCLUIR ITENS  DO GRUPO\nOPCAO: ");
+	printf("\nDIGITE 'A' PARA ADICIONAR ITENS NO GRUPO\nDIGITE 'E' PARA EXCLUIR ITENS  DO GRUPO\nOPCAO: ");
 	char edit_option = getchar();
 
-    if(edit_option != '\n')
-        clear_buffer();
+	if(edit_option != '\n') clear_buffer();
 	
 	edit_option = toupper(edit_option);
 	
 	if(edit_option == 'A'){
 		if(edit_group.quant_products == MAX_ITENS_GROUP){
-			printf("NUMERO MAXIMO DE ITENS DO GRUPO\nRETORNANDO AO MENU");
+			printf("\nNUMERO MAXIMO DE ITENS DO GRUPO\nRETORNANDO AO SUBMENU");
 			fclose(p_arq);
-			fclose(p_arq_products);
+			fclose(p_arq_product);
 			return 0;
 		}
-		/*bloco de codigo para insercao de produtos no grupo*/
-	}
-	else if(edit_option == 'E'){
 		
-		printf("\nLISTA DE PRODUTOS DO GRUPO\n");
-		printf("\nDigite 0 caso nao queira excluir o item");
+		printf("\nCaso queira ver a lista de produtos digite 'L'\n"); 
+		view_list = getchar();
 		
-		for(i = 0; i < MAX_ITENS_GROUP; i++){
-			
-			if(fseek(p_arq_products, (edit_group.id - 1) * sizeof(Products), SEEK_SET) != 0){
-				printf("\nNao foi possivel posicionar o ponteiro do arquivc. Fechando programa.");
+		if(view_list != '\n') clear_buffer();
+	
+		view_list = toupper(view_list);
+	
+		if(view_list == 'L'){
+			flag_return = list_products();
+			if(flag_return == RETORNAR_SUBMENU){
 				fclose(p_arq);
-				fclose(p_arq_products);
-				exit(EXIT_FAILURE);
+				fclose(p_arq_product);
+				return 0; // Ou RETORNAR_SUBMENU
+			}
+			else if(flag_return == RETORNAR_MENU_PRINCIPAL){
+				fclose(p_arq);
+				fclose(p_arq_product);
+				return RETORNAR_MENU_PRINCIPAL;
+			}
+		}//end if 'L'
+			
+		printf("\nVoce devera digitar o ID do produto que deseja adicionar ao grupo, maximo %d!\n", (MAX_ITENS_GROUP - edit_group.quant_products));
+		printf("Caso nao queira adicionar mais produtos digite 0!\n");
+	
+		for(i = 0; i < MAX_ITENS_GROUP; i++) {
+			printf("ID do Produto: ");
+			scanf("%ld", &id_selecionado);
+
+			if(id_selecionado == 0) break;
+			
+			if(id_selecionado < 0){
+				printf("\nERRO: Valor invalido inserido pelo usuario!\n");
+				id_selecionado = 0;
+				clear_buffer();
+				i--;
+				continue;
 			}
 			
-			if(fread(&products_group, sizeof(Products), 1, p_arq_products)){
-				printf("\nID:%.5ld | NOME : %s\tDIGITE O ID: ");
-				scanf("%ld", &id_selecionado);
-				
-				if(id_selecionado == 0)
-					continue;
-				
-				clear_buffer();
-				printf("\nPara excluir item do grupo digite 'E'\n");
-				char confirm_delete = getchar();
+			if(edit_group.quant_products == MAX_ITENS_GROUP){
+				printf("\nGrupo com numero maximo de itens atingido! Crie um novo grupo.");
+				break;
+			}
 			
-			    if(confirm_delete != '\n')
-			        clear_buffer();
+			flag_same_product = 0;
 				
-				confirm_delete = toupper(confirm_delete);
+			if(fseek(p_arq_product, (id_selecionado - 1) * sizeof(Products), SEEK_SET) == 0 && fread(&products_group, sizeof(Products), 1, p_arq_product) == 1){
 				
-				if(confirm_delete == 'E'){
-					for(j = 0; j < MAX_ITENS_GROUP; j++){
-						temp_group[j].id_products[i] = edit_products.id_products[j];
-						if(edit_group.id_products[j] == id_selecionado){
-							
-						}
-					}//end for para encontrar id do grupo
-					
+				for(j = 0; j < MAX_ITENS_GROUP ; j++){
+					if(edit_group.id_products[j] == products_group.id){
+						printf("\nProduto ( ID %ld, %s ) ja existente no grupo\n", products_group.id, products_group.name);
+						flag_same_product = 1; // CORREÇÃO: trocado true por 1
+						break;
+					}
 				}
-			}//end if fread
+				if(flag_same_product == 1){ // CORREÇÃO: trocado true por 1
+					i--;
+					continue;
+				}
+				
+				edit_group.id_products[edit_group.quant_products] = products_group.id;
+				edit_group.quant_products++;
+				printf("\n[+] Produto adicionado com sucesso!\n");
+			}//END FSEEK
 			else{
-				printf("\n\nHouve um erro na leitura do arquivo. Fechando programa.\n");
-				fclose(p_arq);
-				fclose(p_arq_products);	
-				exit(EXIT_FAILURE);
-			}		
+				if (feof(p_arq_product)) {
+					printf("\n[!] Produto ID %ld nao encontrado. (Fim do arquivo).\n", id_selecionado);
+				}
+				else if (ferror(p_arq_product)){
+					printf("\n[X] ERRO CRITICO DE LEITURA no arquivo de produtos!\n");
+					printf("Codigo do Sistema: %s\n", strerror(errno)); 
+					clearerr(p_arq_product); 
+				}
+				else {
+					printf("\n[!] Falha ao posicionar a busca no arquivo.\n");
+				}
+				i--; 
+			}
 		}//end for
 	}
+	
+	else if(edit_option == 'E'){
+		
+		if (edit_group.quant_products == 0) {
+			printf("\nO grupo esta vazio! Nao ha itens para excluir.\n");
+			fclose(p_arq);
+			fclose(p_arq_product);
+			return 0;
+		}
 
+		printf("\n----- LISTA DE PRODUTOS DO GRUPO -----\n");
+		for(i = 0; i < edit_group.quant_products; i++){ 
+			long id_atual = edit_group.id_products[i];
+			
+			if(fseek(p_arq_product, (id_atual - 1) * sizeof(Products), SEEK_SET) == 0){
+				if(fread(&products_group, sizeof(Products), 1, p_arq_product)){
+					printf("ID: %.6ld | NOME: %s\n", products_group.id, products_group.name);
+				}
+			}
+		}
+		
+		printf("\nDIGITE O ID DO PRODUTO QUE DESEJA EXCLUIR (ou 0 para sair): ");
+		scanf("%ld", &id_selecionado);
+		
+		if(id_selecionado != 0){
+			clear_buffer();
+			printf("\nPara confirmar a exclusao do item digite 'E': ");
+			confirm_delete = toupper(getchar());
+		
+			if(confirm_delete != '\n') clear_buffer();
+			
+			if(confirm_delete == 'E'){
+				
+				int posicao_encontrada = -1;
+				
+				for(j = 0; j < edit_group.quant_products; j++){
+					if(edit_group.id_products[j] == id_selecionado){
+						posicao_encontrada = j;
+						break;
+					}
+				}
+				
+				if(posicao_encontrada != -1){
+					for(j = posicao_encontrada; j < edit_group.quant_products - 1; j++){
+						edit_group.id_products[j] = edit_group.id_products[j + 1];
+						edit_group.sales_products[j] = edit_group.sales_products[j + 1];
+					}
+					
+					edit_group.id_products[edit_group.quant_products - 1] = -1;
+					edit_group.sales_products[edit_group.quant_products - 1] = -1;
+					edit_group.quant_products--;
+					
+					printf("\n[+] Produto removido do grupo com sucesso!\n");
+				}
+				else {
+					printf("\n[!] Produto nao pertence a este grupo.\n");
+				}
+			}
+		}
+	}
+	
+	fclose(p_arq_product);	
+	
 	clear_buffer();
-	printf("\nPara confirmar a alteracao digite 'C'\n");
+	printf("\nPara confirmar a alteracao no grupo digite 'C': ");
 	char validate_group = getchar();
 
-    if(validate_group != '\n')
-        clear_buffer();
+	if(validate_group != '\n') clear_buffer();
 	
 	validate_group = toupper(validate_group);
 	
@@ -793,15 +845,14 @@ int edit_itens_group(int id){
 			}
 		}
 		else{
-			printf("\nNao foi possivel posicionar o ponteiro do arquivc. Fechando programa.");
+			printf("\nNao foi possivel posicionar o ponteiro do arquivo. Fechando programa.");
 			fclose(p_arq);
 			exit(EXIT_FAILURE);
 		}
-	}//end if
+	}
 	else{
-		printf("\nNao houve confirmacao do usuario, cancelando novo funcionario\n");
+		printf("\nNao houve confirmacao do usuario, cancelando alteracao.\n");
 		fclose(p_arq);
 		return 0;
-	}//end else if 'C'
-	
+	}
 }//end function edit_itens_group

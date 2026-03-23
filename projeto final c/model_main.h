@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <time.h>
 
 //owner settings
 #define FILTRO_BEM_SUCEDIDO 1
@@ -61,13 +64,27 @@ typedef struct {
     int status;
 } Group;
 
-//prototype generic_functions
+typedef struct{
+    int colunas;          // Ex: 6
+    int linhas;           // Ex: 6
+    int espacamento;      // Distância entre os blocos
+    int id_groups;
+}InterfaceConfig;
+
+//prototype interface functions
+int config_interface();
+
+//prototype navigation_functions
+int visualize_element(const char name_arq[], const int key_ship);
 int	walk_pags(int *contador, long *pag, long max_pags);
 long get_next_id(const char name_arq[], const int key_ship);
 long search_id_generic(const char name_arq[], const int part_ship);
 long search_id_generic_list(const int key_ship);
+long search_name(const char name_arq[], const int key_ship);
 
 //prototype edit_functions
+int desativate_element(const int key_ship);
+int edit_element(const int key_ship, const long *ship_id);
 int edit_name(const char name_arq[], const int key_ship, const long id);
 int edit_status(const char name_arq[], const int key_ship, const long id);
 
@@ -83,8 +100,6 @@ int options_product();
 			int alphabetical_filter(Products array[], size_t tam_array, long max_pags);
 				int comparar_nomes(const void *n1, const void *n2);					
 	void new_product();
-	int desativate_product();
-	int edit_product();
 	//prototype functions of edit_product
 		int edit_sale_price_product(long id_product);
 		int edit_purchase_price_product(long id_product);
@@ -105,7 +120,6 @@ int options_employees();
 				int comparar_nomes_employees(const void *n1, const void *n2);
 	void new_employee();
 		void list_salarys_employees();
-	int desativate_employee();
 	int edit_employee();
 	//prototype functions of edit_employee
 		int edit_position_employee(int id_employee);
@@ -116,16 +130,14 @@ int options_employees();
 	int search_name_employee();
 	
 //prototype groups
-/*
 int options_groups_products();
 	int list_groups();
 		void itens_group(int id);
 		int filters_groups(Group array[], size_t tam_array);
 		int status_filter_groups(Group array[], size_t tam_array);
 	void new_group();
-	int edit_interface_groups();
-	int edit_group();
-	int search_group();*/
+	int edit_itens_group(int id);
+	//int edit_interface_groups();
 		
 //prototype security
 void clear_buffer();
@@ -135,10 +147,7 @@ int check_burst_buffer(char *string, int size_string);
 int validate_full_name(const char *string);
 int validate_price(float price);
 void texto_minusculo(char *destino, const char *origem);
-int check_similar_names_product(char *new_name);
-int verify_duplicate_name_product(char *new_name);
-int warning_similar_names_position_employees(char *new_name);
-int warning_duplicate_name_employees(char *new_name);
-int verify_duplicate_name_group(char *new_name);
+int check_similar_names(const char name_arq[], const int key_ship, char *new_name);
+int verify_duplicate_name(const char name_arq[], const int key_ship, char *new_name);
 
 #endif

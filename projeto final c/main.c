@@ -3,7 +3,7 @@
 int main() {
 	
 	int exit_flag;
-	
+	config_interface();
 	exit_flag = options_menu();
 	if(exit_flag == SAIR_PROGRAMA)
 		return 0;
@@ -37,9 +37,10 @@ int options_menu(){
 					return SAIR_PROGRAMA;
 				else
 					continue;
-			case 4: printf("\nINCIANDO GRUPOS ... \n\n");
+			case 4: printf("\nINCIANDO FECHAMENTO DE CAIXA ... \n\n");;
 				break;
-			case 5: printf("\nINCIANDO FECHAMENTO DE CAIXA ... \n\n");
+			case 5: printf("\nINCIANDO GRUPOS ... \n\n");
+				options_groups_products();
 				break;//end case 4
 			case 6: printf("\nSAINDO DO PROGRAMA ... \n");
 				return SAIR_PROGRAMA;
